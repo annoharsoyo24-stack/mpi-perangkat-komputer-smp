@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPI Perangkat Komputer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-800 font-sans">
+
+    <!-- Navbar Minimalis -->
+    <nav class="p-4 bg-black/20 backdrop-blur-md text-white sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center px-4">
+            <div class="flex items-center gap-2 font-bold text-xl cursor-pointer" onclick="setView('home')">
+                <i data-lucide="monitor" class="w-6 h-6 text-indigo-400"></i>
+                <span>Edu<span class="text-indigo-400">Komputer</span></span>
+            </div>
+            <button id="nav-home-btn" onclick="setView('menu')" class="hover:text-indigo-300 transition-colors hidden" title="Menu Utama">
+                <i data-lucide="home" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="app-content" class="container mx-auto pb-12 pt-8 px-4">
+        <!-- Konten akan dirender di sini oleh JavaScript -->
+    </main>
+
+    <script>
+        // --- DATA MATERI ---
+        const materi = {
+            hardware: {
+                title: "Hardware (Perangkat Keras)",
+                icon: "monitor",
+                iconColor: "text-blue-500",
+                color: "bg-blue-100",
+                borderColor: "border-blue-400",
+                description: "Hardware adalah komponen fisik dari komputer yang dapat dilihat, disentuh, dan diraba. Hardware berfungsi untuk memasukkan, menampilkan, dan mengeluarkan data.",
+                examples: [
+                    { name: "Monitor", icon: "monitor", desc: "Menampilkan output visual berupa gambar atau teks." },
+                    { name: "Keyboard", icon: "keyboard", desc: "Perangkat input untuk mengetik huruf, angka, dan simbol." },
+                    { name: "Mouse", icon: "mouse", desc: "Perangkat input untuk menggerakkan kursor dan klik." },
+                    { name: "Printer", icon: "printer", desc: "Mencetak dokumen digital menjadi wujud fisik (kertas)." }
+                ]
+            },
+            software: {
+                title: "Software (Perangkat Lunak)",
+                icon: "app-window",
+                iconColor: "text-green-500",
+                color: "bg-green-100",
+                borderColor: "border-green-400",
+                description: "Software adalah kumpulan instruksi, data, atau program yang digunakan untuk mengoperasikan komputer dan menjalankan tugas-tugas tertentu. Tidak memiliki wujud fisik.",
+                examples: [
+                    { name: "Sistem Operasi", icon: "server", desc: "Program dasar penghubung hardware dan software (contoh: Windows, macOS, Linux)." },
+                    { name: "Aplikasi Perkantoran", icon: "book-open", desc: "Untuk tugas administratif (contoh: Microsoft Word, Excel)." },
+                    { name: "Browser Web", icon: "monitor", desc: "Aplikasi untuk menjelajahi internet (contoh: Chrome, Firefox)." },
+                    { name: "Aplikasi Desain", icon: "app-window", desc: "Aplikasi untuk mengolah gambar/video (contoh: Photoshop, Canva)." }
+                ]
+            },
+            process: {
+                title: "Process (Pemrosesan)",
+                icon: "cpu",
+                iconColor: "text-purple-500",
+                color: "bg-purple-100",
+                borderColor: "border-purple-400",
+                description: "Perangkat pemrosesan adalah 'otak' dari komputer yang berfungsi mengolah data yang masuk (input) lalu menghasilkan informasi (output).",
+                examples: [
+                    { name: "CPU (Processor)", icon: "cpu", desc: "Otak utama komputer yang memproses semua instruksi." },
+                    { name: "Motherboard", icon: "microchip", desc: "Papan sirkuit utama tempat semua komponen terhubung." },
+                    { name: "VGA / GPU", icon: "monitor", desc: "Unit pemroses grafis untuk merender gambar dan video." },
+                    { name: "Sound Card", icon: "app-window", desc: "Memproses data menjadi suara." }
+                ]
+            },
+            storage: {
+                title: "Storage (Penyimpanan)",
+                icon: "hard-drive",
+                iconColor: "text-orange-500",
+                color: "bg-orange-100",
+                borderColor: "border-orange-400",
+                description: "Storage adalah perangkat yang digunakan untuk menyimpan data, baik sementara maupun permanen, agar dapat digunakan kembali di masa mendatang.",
+                examples: [
+                    { name: "RAM", icon: "microchip", desc: "Penyimpanan memori sementara yang sangat cepat." },
+                    { name: "Hard Disk (HDD)", icon: "hard-drive", desc: "Penyimpanan permanen berkapasitas besar menggunakan piringan magnetik." },
+                    { name: "SSD", icon: "hard-drive", desc: "Penyimpanan permanen modern yang jauh lebih cepat dari HDD." },
+                    { name: "Flashdisk", icon: "smartphone", desc: "Penyimpanan portabel yang mudah dibawa kemana-mana." }
+                ]
+            }
+        };
+
+        const questions = [
+            {
+                question: "Manakah di bawah ini yang merupakan contoh dari perangkat Hardware (Output)?",
+                options: ["Keyboard", "Monitor", "Microsoft Word", "CPU"],
+                answer: 1
+            },
+            {
+                question: "Komponen yang disebut sebagai 'Otak' dari komputer adalah...",
+                options: ["RAM", "Hard Disk", "Processor (CPU)", "Motherboard"],
+                answer: 2
+            },
+            {
+                question: "Perangkat lunak yang berfungsi sebagai sistem dasar pengoperasian komputer adalah...",
+                options: ["Sistem Operasi", "Mouse", "Aplikasi Game", "Flashdisk"],
+                answer: 0
+            },
+            {
+                question: "Mana di bawah ini yang merupakan media penyimpanan (Storage) permanen dan memiliki kecepatan baca/tulis yang sangat tinggi?",
+                options: ["RAM", "CD-ROM", "Disket", "Solid State Drive (SSD)"],
+                answer: 3
+            }
+        ];
+
+        // --- STATE MANAJEMEN ---
+        let view = 'home'; // home, menu, hardware, software, process, storage, quiz
+        let currentQuestion = 0;
+        let score = 0;
+        let showResult = false;
+
+        const appContent = document.getElementById('app-content');
+        const navHomeBtn = document.getElementById('nav-home-btn');
+
+        // --- NAVIGATION & LOGIC ---
+        function setView(newView) {
+            view = newView;
+            render();
+        }
+
+        function startQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            showResult = false;
+            setView('quiz');
+        }
+
+        function handleAnswer(selectedIndex) {
+            if (selectedIndex === questions[currentQuestion].answer) {
+                score++;
+            }
+            
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                render(); // Re-render quiz view
+            } else {
+                showResult = true;
+                render(); // Render result view
+            }
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function render() {
+            // Atur visibilitas tombol home navbar
+            if (view === 'home') {
+                navHomeBtn.classList.add('hidden');
+            } else {
+                navHomeBtn.classList.remove('hidden');
+            }
+
+            // Pilih view yang akan di-render
+            let htmlContent = '';
+            
+            if (view === 'home') {
+                htmlContent = getHomeView();
+            } else if (view === 'menu') {
+                htmlContent = getMenuView();
+            } else if (view === 'quiz') {
+                htmlContent = getQuizView();
+            } else if (materi[view]) {
+                htmlContent = getContentDetailView(view);
+            }
+
+            appContent.innerHTML = htmlContent;
+            
+            // Re-inisialisasi ikon Lucide setiap kali innerHTML berubah
+            lucide.createIcons();
+        }
+
+        // --- VIEW TEMPLATES ---
+        function getHomeView() {
+            return `
+                <div class="flex flex-col items-center justify-center min-h-[80vh] text-center animate-fade-in">
+                    <div class="bg-white p-8 rounded-3xl shadow-xl max-w-2xl w-full border-t-8 border-indigo-600">
+                        <div class="flex justify-center mb-6">
+                            <i data-lucide="monitor" class="w-24 h-24 text-indigo-600"></i>
+                        </div>
+                        <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4 tracking-tight">
+                            Sistem Komputer
+                        </h1>
+                        <p class="text-lg text-gray-600 mb-8 max-w-lg mx-auto">
+                            Media Pembelajaran Interaktif (MPI) untuk mengenal dasar-dasar perangkat komputer mulai dari Hardware, Software, Process, hingga Storage.
+                        </p>
+                        <button onclick="setView('menu')" class="group flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xl py-4 px-8 rounded-full transition-all hover:shadow-lg hover:scale-105 mx-auto">
+                            <i data-lucide="play-circle" class="w-6 h-6 group-hover:animate-pulse"></i>
+                            Mulai Belajar
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getMenuView() {
+            let cardsHtml = '';
+            for (const [key, data] of Object.entries(materi)) {
+                const titleParts = data.title.split(' ');
+                const mainTitle = titleParts[0];
+                const subTitle = titleParts.slice(1).join(' ');
+                
+                cardsHtml += `
+                    <button onclick="setView('${key}')" class="flex flex-col items-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 group border-b-4 border-transparent hover:border-indigo-500">
+                        <div class="p-4 rounded-full mb-4 transition-transform group-hover:scale-110 ${data.color}">
+                            <i data-lucide="${data.icon}" class="w-12 h-12 ${data.iconColor}"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">${mainTitle}</h3>
+                        <p class="text-sm text-gray-500 text-center font-medium">${subTitle}</p>
+                    </button>
+                `;
+            }
+
+            return `
+                <div class="w-full max-w-6xl mx-auto animate-fade-in">
+                    <div class="text-center mb-10">
+                        <h2 class="text-4xl font-extrabold text-white drop-shadow-md mb-2">Pilih Materi</h2>
+                        <p class="text-indigo-100 text-lg">Pelajari setiap komponen yang membangun sistem komputer.</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                        ${cardsHtml}
+                    </div>
+
+                    <div class="flex justify-center mt-8">
+                        <button onclick="startQuiz()" class="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold py-4 px-10 rounded-full shadow-lg transition-all hover:scale-105">
+                            <i data-lucide="book-open" class="w-6 h-6"></i>
+                            Mulai Kuis Evaluasi
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getContentDetailView(topicKey) {
+            const data = materi[topicKey];
+            
+            let examplesHtml = '';
+            data.examples.forEach(item => {
+                examplesHtml += `
+                    <div class="flex gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow items-start">
+                        <div class="p-3 rounded-xl flex-shrink-0 ${data.color}">
+                            <i data-lucide="${item.icon}" class="w-6 h-6 text-gray-700"></i>
+                        </div>
+                        <div class="text-left">
+                            <h4 class="font-bold text-lg text-gray-900 mb-1">${item.name}</h4>
+                            <p class="text-gray-600 text-sm leading-relaxed">${item.desc}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            return `
+                <div class="w-full max-w-5xl mx-auto animate-fade-in">
+                    <button onclick="setView('menu')" class="flex items-center gap-2 text-white bg-indigo-800/40 hover:bg-indigo-800/60 px-4 py-2 rounded-full mb-6 backdrop-blur-sm transition-all w-fit">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i> Kembali ke Menu
+                    </button>
+
+                    <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-t-4 ${data.borderColor}">
+                        <!-- Header -->
+                        <div class="p-8 md:p-12 ${data.color} flex flex-col md:flex-row items-center gap-6">
+                            <div class="bg-white p-6 rounded-full shadow-md">
+                                <i data-lucide="${data.icon}" class="w-16 h-16 ${data.iconColor}"></i>
+                            </div>
+                            <div class="text-center md:text-left">
+                                <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">${data.title}</h2>
+                                <p class="text-lg text-gray-700 leading-relaxed max-w-3xl">
+                                    ${data.description}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Examples Grid -->
+                        <div class="p-8 md:p-12 bg-gray-50">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-8 text-center border-b-2 border-gray-200 pb-4 inline-block mx-auto w-full">Contoh Perangkat</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                ${examplesHtml}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getQuizView() {
+            if (showResult) {
+                const percentage = (score / questions.length) * 100;
+                return `
+                    <div class="flex flex-col items-center justify-center min-h-[70vh] animate-fade-in">
+                        <div class="bg-white p-10 rounded-3xl shadow-xl max-w-lg w-full text-center border-t-8 border-green-500">
+                            <div class="flex justify-center text-green-500 mb-6">
+                                <i data-lucide="check-circle" class="w-24 h-24"></i>
+                            </div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-2">Kuis Selesai!</h2>
+                            <p class="text-gray-600 mb-6">Skor Anda:</p>
+                            
+                            <div class="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-8">
+                                ${percentage}
+                            </div>
+
+                            <div class="text-sm text-gray-500 mb-8">
+                                Benar ${score} dari ${questions.length} soal.
+                            </div>
+                            
+                            <div class="flex flex-col gap-3">
+                                <button onclick="startQuiz()" class="w-full bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold py-3 px-6 rounded-xl transition-colors">
+                                    Ulangi Kuis
+                                </button>
+                                <button onclick="setView('menu')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition-colors">
+                                    Kembali ke Menu Utama
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const currentQ = questions[currentQuestion];
+            let optionsHtml = '';
+            
+            currentQ.options.forEach((option, index) => {
+                optionsHtml += `
+                    <button onclick="handleAnswer(${index})" class="flex items-center justify-between w-full text-left p-4 md:p-5 rounded-2xl border-2 border-gray-100 hover:border-indigo-500 hover:bg-indigo-50 transition-all group">
+                        <span class="text-lg text-gray-700 group-hover:text-indigo-900 font-medium">
+                            ${option}
+                        </span>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 group-hover:text-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                    </button>
+                `;
+            });
+
+            return `
+                <div class="w-full max-w-3xl mx-auto py-8 animate-fade-in">
+                    <button onclick="setView('menu')" class="flex items-center gap-2 text-white bg-indigo-800/40 hover:bg-indigo-800/60 px-4 py-2 rounded-full mb-8 backdrop-blur-sm transition-all w-fit">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i> Keluar Kuis
+                    </button>
+
+                    <div class="bg-white rounded-3xl shadow-xl overflow-hidden p-8 md:p-10 border-t-8 border-indigo-500">
+                        <div class="flex justify-between items-center mb-8">
+                            <span class="text-sm font-bold text-indigo-600 bg-indigo-50 px-4 py-1 rounded-full">
+                                Pertanyaan ${currentQuestion + 1} / ${questions.length}
+                            </span>
+                            <span class="text-sm font-medium text-gray-400">Evaluasi MPI</span>
+                        </div>
+                        
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-8 leading-tight">
+                            ${currentQ.question}
+                        </h2>
+                        
+                        <div class="flex flex-col gap-3">
+                            ${optionsHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- Inisialisasi Awal ---
+        render(); // Render halaman pertama (Home)
+    </script>
+</body>
+</html>
